@@ -53,7 +53,7 @@ const useRamps = (
         }
 
         params.set('chainId', numericChainId);
-        if (analyticsId) {
+        if (isMetaMetricsEnabled === true && analyticsId) {
           params.set('metametricsId', analyticsId);
         }
         params.set('metricsEnabled', String(isMetaMetricsEnabled === true));

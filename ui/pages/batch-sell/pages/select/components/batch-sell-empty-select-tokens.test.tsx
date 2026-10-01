@@ -184,5 +184,25 @@ describe('BatchSellEmptySelectTokens', () => {
         true,
       );
     });
+
+    it('passes metrics as disabled before the consent decision is made', () => {
+      seedSelectors({
+        analyticsId: 'test-id',
+        consentDecisionMade: false,
+        isOptedIn: true,
+        isMarketingEnabled: false,
+      });
+
+      render(<BatchSellEmptySelectTokens />);
+      fireEvent.click(screen.getByText('exploreTokens'));
+
+      expect(mockGetPortfolioUrl).toHaveBeenCalledWith(
+        'explore/tokens',
+        'ext_batch_sell_empty',
+        'test-id',
+        false,
+        false,
+      );
+    });
   });
 });

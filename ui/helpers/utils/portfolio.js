@@ -11,7 +11,11 @@ export function getPortfolioUrl(
   const url = new URL(endpoint, baseUrl);
 
   url.searchParams.append('metamaskEntry', metamaskEntry);
-  url.searchParams.append('metametricsId', analyticsId);
+  // The persistent analytics id may only leave the extension once the user has
+  // consented to MetaMetrics.
+  if (metricsEnabled === true && analyticsId) {
+    url.searchParams.append('metametricsId', analyticsId);
+  }
 
   // Append privacy preferences for metrics + marketing on user navigation to Portfolio
   url.searchParams.append('metricsEnabled', String(metricsEnabled));
