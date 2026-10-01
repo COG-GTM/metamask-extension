@@ -204,8 +204,6 @@
     },
     "accountWalletsMetadata": {},
     "activeProvider": "string",
-    "activeQrCodeScanRequest": "null",
-    "lastQrScanCompletedSuccessfully": "null",
     "addressBook": {},
     "addressScanCache": {},
     "addressSecurityAlertResponses": {},
@@ -363,7 +361,6 @@
     "currentAppVersion": "string",
     "currentCurrency": "string",
     "currentExtensionPopupId": "number",
-    "dappSwapComparisonData": {},
     "currentLocale": "string",
     "currentMigrationVersion": "number",
     "customAssets": {},
@@ -711,7 +708,6 @@
     "lastUpdated": "number",
     "lastUpdatedAt": "null",
     "lastUpdatedFromVersion": "null",
-    "lastVisitedRoute": "null",
     "lastViewedUserSurvey": "null",
     "ledgerTransportType": "string",
     "logs": {},
@@ -872,11 +868,6 @@
     "onboardingTabs": {},
     "openSeaEnabled": "boolean",
     "optedIn": "boolean",
-    "orderedNetworkList": [
-      {
-        "networkId": "string"
-      }
-    ],
     "orderedTransactionHistory": [],
     "orders": [],
     "outdatedBrowserWarningLastShown": "null",
@@ -1066,7 +1057,6 @@
     "shieldPausedToastLastClickedOrClosed": "null",
     "showDownloadMobileAppSlide": "boolean",
     "showShieldEntryModalOnce": "null",
-    "showSidePanelMigrationToast": "boolean",
     "storageWriteErrorType": "null",
     "sidePanelGasPollTokens": [],
     "signature": "string",
