@@ -97,11 +97,16 @@ export function sanitizeUIState(state: FlattenedUIState): FlattenedUIState {
  * values while keeping the rest of the UI state intact.
  *
  * @param state - The state to sanitize.
+ * @param excludedKeys - Flat state keys whose controller metadata sets
+ * `includeInStateLogs: false`.
  */
-export function sanitizeStateLogs(state: FlattenedUIState): FlattenedUIState {
+export function sanitizeStateLogs(
+  state: FlattenedUIState,
+  excludedKeys: readonly string[] = [],
+): FlattenedUIState {
   const newState = { ...state };
 
-  for (const key of QR_SYNC_STATE_LOG_KEYS) {
+  for (const key of [...QR_SYNC_STATE_LOG_KEYS, ...excludedKeys]) {
     delete newState[key];
   }
 

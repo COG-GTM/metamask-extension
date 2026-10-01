@@ -443,5 +443,19 @@ describe('State Utils', () => {
         completedOnboarding: true,
       });
     });
+
+    it('removes keys excluded by controller metadata', () => {
+      const state = {
+        completedOnboarding: true,
+        lastVisitedRoute: { path: '/perps/market/ETH', timestamp: 1 },
+        deferredDeepLink: { createdAt: 1, referringLink: 'https://x.y' },
+      };
+
+      expect(
+        sanitizeStateLogs(state, ['lastVisitedRoute', 'deferredDeepLink']),
+      ).toStrictEqual({
+        completedOnboarding: true,
+      });
+    });
   });
 });

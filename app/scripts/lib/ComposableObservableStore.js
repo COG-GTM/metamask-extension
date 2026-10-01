@@ -118,6 +118,26 @@ export default class ComposableObservableStore extends ObservableStore {
     return flatState;
   }
 
+  /**
+   * Returns the flat state keys that any composed controller declares with
+   * `includeInStateLogs: false` in its state metadata.
+   *
+   * @returns {string[]} Flat state keys to exclude from state logs.
+   */
+  getStateLogExcludedKeys() {
+    const excludedKeys = new Set();
+    for (const store of Object.values(this.config)) {
+      for (const [key, propertyMetadata] of Object.entries(
+        store.metadata ?? {},
+      )) {
+        if (propertyMetadata?.includeInStateLogs === false) {
+          excludedKeys.add(key);
+        }
+      }
+    }
+    return [...excludedKeys];
+  }
+
   #onStateChange(controllerKey, newState, patches) {
     const oldState = this.getState()[controllerKey];
 

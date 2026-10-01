@@ -340,11 +340,16 @@ export async function getCleanAppState(store) {
   state.version = global.platform.getVersion();
   state.browser = window.navigator.userAgent;
 
+  const stateLogExcludedKeys = await actions.getStateLogExcludedKeys();
+
   // when JSON.stringiy, `undefined` value will be left out.
-  state.metamask = sanitizeStateLogs({
-    ...state.metamask,
-    socialLoginEmail: undefined,
-  });
+  state.metamask = sanitizeStateLogs(
+    {
+      ...state.metamask,
+      socialLoginEmail: undefined,
+    },
+    stateLogExcludedKeys,
+  );
 
   return state;
 }

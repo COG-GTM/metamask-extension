@@ -4922,6 +4922,7 @@ export default class MetamaskController extends EventEmitter {
         handleUpdate();
       },
       getStatePatches: () => patchStore.flushPendingPatches(),
+      getStateLogExcludedKeys: () => this.memStore.getStateLogExcludedKeys(),
       messengerSubscribe: messengerSubscriptions.subscribe.bind(
         messengerSubscriptions,
       ),

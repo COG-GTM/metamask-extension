@@ -397,6 +397,41 @@ describe('ComposableObservableStore', () => {
     expect(store.getFlatState()).toStrictEqual({});
   });
 
+  it('should return keys whose metadata excludes them from state logs', () => {
+    const messenger = getMessenger();
+    class StateLogsController extends BaseController {
+      constructor() {
+        super({
+          messenger,
+          name: 'StateLogsController',
+          metadata: {
+            visible: { persist: false, includeInStateLogs: true },
+            hidden: { persist: false, includeInStateLogs: false },
+            unflagged: { persist: false },
+          },
+          state: { visible: 'v', hidden: 'h', unflagged: 'u' },
+        });
+      }
+    }
+    const store = new ComposableObservableStore({
+      config: {
+        Example: new ExampleController({ messenger }),
+        Legacy: new ObservableStore({ legacy: 'legacy' }),
+        StateLogs: new StateLogsController(),
+      },
+      controllerMessenger: messenger,
+    });
+
+    expect(store.getStateLogExcludedKeys()).toStrictEqual(['hidden']);
+  });
+
+  it('should return no state log excluded keys when not configured', () => {
+    const store = new ComposableObservableStore({
+      controllerMessenger: getMessenger(),
+    });
+    expect(store.getStateLogExcludedKeys()).toStrictEqual([]);
+  });
+
   it('should throw if the controller messenger is omitted and the config includes a BaseControllerV2 controller', () => {
     const messenger = getMessenger();
     const exampleController = new ExampleController({

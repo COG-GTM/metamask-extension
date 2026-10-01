@@ -4305,6 +4305,20 @@ export async function forceUpdateMetamaskState(
   return dispatch(updateMetamaskState(pendingPatches));
 }
 
+/**
+ * Returns the flat state keys that background controllers exclude from state
+ * logs via `includeInStateLogs: false` metadata.
+ *
+ * @returns The excluded state keys.
+ */
+export async function getStateLogExcludedKeys(): Promise<string[]> {
+  return (
+    (await submitRequestToBackground<string[] | undefined>(
+      'getStateLogExcludedKeys',
+    )) ?? []
+  );
+}
+
 export function toggleNetworkMenu(payload?: {
   isAddingNewNetwork: boolean;
   isMultiRpcOnboarding?: boolean;

@@ -46,6 +46,7 @@ jest.mock('../shared/lib/i18n', () => ({
 jest.mock('./store/actions', () => ({
   ...jest.requireActual('./store/actions'),
   checkIsSeedlessPasswordOutdated: jest.fn(),
+  getStateLogExcludedKeys: jest.fn().mockResolvedValue([]),
 }));
 
 jest.mock('./selectors', () => ({
@@ -155,6 +156,38 @@ describe('Index Tests', () => {
     };
     const store = configureMockStore([thunk])({
       ...mockState,
+    });
+
+    const cleanAppState = await getCleanAppState(store);
+    expect(cleanAppState).toStrictEqual({
+      metamask: {
+        currentLocale: 'en',
+        socialLoginEmail: undefined,
+      },
+      version: mockVersion,
+      browser: mockUserAgent,
+    });
+  });
+
+  it('should remove keys excluded by controller metadata from downloaded state logs', async () => {
+    const mockVersion = '1.0.0';
+    const mockUserAgent = 'test-user-agent';
+
+    jest.spyOn(global.platform, 'getVersion').mockReturnValue(mockVersion);
+    jest
+      .spyOn(window.navigator, 'userAgent', 'get')
+      .mockReturnValue(mockUserAgent);
+    actions.getStateLogExcludedKeys.mockResolvedValueOnce([
+      'lastVisitedRoute',
+      'deferredDeepLink',
+    ]);
+
+    const store = configureMockStore([thunk])({
+      metamask: {
+        currentLocale: 'en',
+        lastVisitedRoute: { path: '/perps/market/ETH', timestamp: 1 },
+        deferredDeepLink: { createdAt: 1, referringLink: 'https://x.y' },
+      },
     });
 
     const cleanAppState = await getCleanAppState(store);
