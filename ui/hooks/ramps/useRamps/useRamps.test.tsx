@@ -51,7 +51,7 @@ describe('useRamps', () => {
         },
       };
 
-      const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=ext_buy_sell_button&chainId=${numericChainId}&metametricsId=${mockedMetametricsId}&metricsEnabled=false`;
+      const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=ext_buy_sell_button&chainId=${numericChainId}&metricsEnabled=false`;
 
       const { result } = renderHook(() => useRamps(), { wrapper });
 
@@ -74,7 +74,7 @@ describe('useRamps', () => {
       },
     };
 
-    const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=${metaMaskEntry}&chainId=${mockChainId}&metametricsId=${mockedMetametricsId}&metricsEnabled=false`;
+    const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=${metaMaskEntry}&chainId=${mockChainId}&metricsEnabled=false`;
     const openTabSpy = jest.spyOn(global.platform, 'openTab');
 
     const { result } = renderHook(() => useRamps(), { wrapper });
@@ -98,7 +98,7 @@ describe('useRamps', () => {
       },
     };
 
-    const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=${metaMaskEntry}&chainId=${mockChainId}&metametricsId=${mockedMetametricsId}&metricsEnabled=false`;
+    const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=${metaMaskEntry}&chainId=${mockChainId}&metricsEnabled=false`;
     const openTabSpy = jest.spyOn(global.platform, 'openTab');
 
     const { result } = renderHook(
@@ -138,7 +138,7 @@ describe('useRamps', () => {
         ...mockNetworkState({ chainId: evmChainId }),
       },
     };
-    const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=${metaMaskEntry}&chainId=1&metametricsId=${mockedMetametricsId}&metricsEnabled=false`;
+    const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=${metaMaskEntry}&chainId=1&metricsEnabled=false`;
     const { result } = renderHook(() => useRamps(), { wrapper });
     const buyURI = result.current.getBuyURI(evmChainId);
     expect(buyURI).toBe(mockBuyURI);
@@ -155,7 +155,7 @@ describe('useRamps', () => {
         ...mockNetworkState({ chainId: '0x1' }),
       },
     };
-    const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=${metaMaskEntry}&chainId=1&metametricsId=${mockedMetametricsId}&metricsEnabled=false`;
+    const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=${metaMaskEntry}&chainId=1&metricsEnabled=false`;
     const { result } = renderHook(() => useRamps(), { wrapper });
     const buyURI = result.current.getBuyURI(caipChainId);
     expect(buyURI).toBe(mockBuyURI);
@@ -174,9 +174,50 @@ describe('useRamps', () => {
       },
     };
     const encodedChainId = encodeURIComponent(bitcoinChainId);
-    const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=${metaMaskEntry}&chainId=${encodedChainId}&metametricsId=${mockedMetametricsId}&metricsEnabled=false`;
+    const mockBuyURI = `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=${metaMaskEntry}&chainId=${encodedChainId}&metricsEnabled=false`;
     const { result } = renderHook(() => useRamps(), { wrapper });
     const buyURI = result.current.getBuyURI(bitcoinChainId);
     expect(buyURI).toBe(mockBuyURI);
+  });
+
+  it('includes the metametrics id only once the user has opted in to MetaMetrics', () => {
+    (isEvmChainId as jest.Mock).mockReturnValueOnce(true);
+    mockStoreState = {
+      ...mockStoreState,
+      metamask: {
+        ...mockStoreState.metamask,
+        ...mockNetworkState({ chainId: '0x1' }),
+        consentDecisionMade: true,
+        optedIn: true,
+      },
+    };
+
+    const { result } = renderHook(() => useRamps(), { wrapper });
+    const buyURI = result.current.getBuyURI('0x1');
+
+    expect(buyURI).toBe(
+      `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=ext_buy_sell_button&chainId=1&metametricsId=${mockedMetametricsId}&metricsEnabled=true`,
+    );
+  });
+
+  it('omits the metametrics id when the user has opted out of MetaMetrics', () => {
+    (isEvmChainId as jest.Mock).mockReturnValueOnce(true);
+    mockStoreState = {
+      ...mockStoreState,
+      metamask: {
+        ...mockStoreState.metamask,
+        ...mockNetworkState({ chainId: '0x1' }),
+        consentDecisionMade: true,
+        optedIn: false,
+      },
+    };
+
+    const { result } = renderHook(() => useRamps(), { wrapper });
+    const buyURI = result.current.getBuyURI('0x1');
+
+    expect(buyURI).not.toContain('metametricsId');
+    expect(buyURI).toBe(
+      `${process.env.PORTFOLIO_URL}/buy?metamaskEntry=ext_buy_sell_button&chainId=1&metricsEnabled=false`,
+    );
   });
 });
